@@ -20,13 +20,18 @@ public class UserController implements RestController {
     @Override
     public Response handleRequest(Request request) {
         System.out.println("user request received");
+
         //GET request with e.g. id parameter -> /user/1
         if (request.getMethod() == Method.GET && request.getPathParts().size() > 1) {
             return this.userService.getUser(request.getPathParts().get(1));
         }
+
+        //GET request
         else if (request.getMethod() == Method.GET) {
             return this.userService.getUser();
         }
+
+        //POST request
         else if (request.getMethod() == Method.POST) {
             return this.userService.addUser(request);
         }

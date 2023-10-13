@@ -17,6 +17,7 @@ public class Main {
     {
         Router router = new Router();
         router.addService("/user", new UserController());
+        router.addService("/user/{userId}", new UserController());
         return router;
     }
 }
