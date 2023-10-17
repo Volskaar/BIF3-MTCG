@@ -45,9 +45,6 @@ public class UserService extends BaseService{
                 throw new RuntimeException(e);
             }
         }
-        else{
-            json = "login denied";
-        }
 
         return new Response(HttpStatus.NOT_IMPLEMENTED, ContentType.JSON, json);
     }
