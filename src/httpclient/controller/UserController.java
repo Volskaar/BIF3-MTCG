@@ -19,7 +19,7 @@ public class UserController implements RestController {
 
     @Override
     public Response handleRequest(Request request) {
-        System.out.println("user request received");
+        System.out.println("Request received");
 
         //GET request with e.g. id parameter -> /user/1
         if (request.getMethod() == Method.GET && request.getPathParts().size() > 1) {
@@ -29,6 +29,12 @@ public class UserController implements RestController {
         //GET request
         else if (request.getMethod() == Method.GET) {
             return this.userService.getUser();
+        }
+
+        //POST user/login request
+        else if(request.getMethod() == Method.POST && request.getPathname().equals("/user/login")){
+            System.out.println("login post");
+            return this.userService.loginUser(request, request.getParams());
         }
 
         //POST request

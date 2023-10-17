@@ -33,7 +33,26 @@ public class UserService extends BaseService{
         return new Response(HttpStatus.NOT_IMPLEMENTED, ContentType.JSON, json);
     }
 
-    // POST /user
+    public Response loginUser(Request request, String params){
+
+        String json = null;
+
+        if(params != null){
+            try{
+                json = this.getObjectMapper().writeValueAsString(params);
+            }
+            catch(JsonProcessingException e){
+                throw new RuntimeException(e);
+            }
+        }
+        else{
+            json = "login denied";
+        }
+
+        return new Response(HttpStatus.NOT_IMPLEMENTED, ContentType.JSON, json);
+    }
+
+    //POST /user
     public Response addUser(Request request){
         return new Response(HttpStatus.CREATED);
     }
