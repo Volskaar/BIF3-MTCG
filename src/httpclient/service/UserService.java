@@ -7,10 +7,15 @@ import httpserver.server.Response;
 import httpclient.model.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
+import httpclient.persistance.UnitOfWork;
+import httpclient.persistance.repository.UserRepository;
+
 public class UserService extends BaseService{
 
-    public UserService(){
+    private UserRepository userRepository;
 
+    public UserService(){
+        this.userRepository = new UserRepository(new UnitOfWork());
     }
 
     // GET /user
@@ -20,11 +25,12 @@ public class UserService extends BaseService{
 
     // GET /user/id
     public Response getUser(String id){
-        //static test user for call
-        User testUser = new User(1, "Mario", "passwort123");
+        System.out.println("get user for id: " + id);
+        User user = userRepository.findById(Integer.parseInt(id));
+
         String json = null;
         try{
-            json = this.getObjectMapper().writeValueAsString(testUser);
+            json = this.getObjectMapper().writeValueAsString(user);
         }
         catch(JsonProcessingException e){
             throw new RuntimeException(e);
