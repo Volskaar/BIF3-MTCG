@@ -1,0 +1,5 @@
+1. open docker desktop
+2. stard database mtcg
+3. UN = volskaar
+   PW = postgres
+4. test connection (right click db, properties, test connection)
