@@ -30,12 +30,13 @@ public class Main {
         // CURL - edit user data
         router.addService("/users/{username}", new UserController());
 
-        /* WIP
-
         // CURL - login users
         router.addService("/sessions", new UserController());
 
         /////////////////////////////////////////////////////////////////////
+
+        /* WIP
+
         // CURL - create/add packages
         router.addService("/packages", new packageController());
 

@@ -8,6 +8,8 @@ import httpserver.http.Method;
 import httpserver.http.HttpStatus;
 import httpserver.http.ContentType;
 
+import java.util.Objects;
+
 public class UserController implements RestController {
 
     private final UserService userService;
@@ -36,8 +38,12 @@ public class UserController implements RestController {
 
         ///////////////////////////////////////////////////////////////////*/
 
+        if(request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/sessions")){
+            return this.userService.loginUser(request);
+        }
+
         // CURL - create users
-        if (request.getMethod() == Method.POST) {
+        else if (request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/users")) {
             return this.userService.createUser(request);
         }
 
@@ -45,6 +51,8 @@ public class UserController implements RestController {
         else if (request.getMethod() == Method.POST && request.getPathParts().size() > 1) {
             return this.userService.editUser(request.getPathParts().get(1));
         }
+
+        /////////////////////////////////////////////////////////////////////
 
         //FAILSAFE
         return new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "[]");

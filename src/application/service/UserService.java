@@ -63,12 +63,44 @@ public class UserService extends BaseService{
         }
 
         if(userRepository.createNewUser(newUser)){
+            System.out.println(newUser.getUsername() + ": user created!");
             return new Response(HttpStatus.CREATED);
         }
         else{
             return new Response(HttpStatus.FORBIDDEN);
         }
     }
+
+    /////////////////////////////////////////////////////////////////////
+
+    //POST /sessions - login user
+    public Response loginUser(Request request){
+        String requestBody = request.getBody();
+
+        User user = null;
+
+        try{
+            user = getObjectMapper().readValue(requestBody, User.class);
+        }
+        catch(JsonProcessingException e){
+            throw new RuntimeException(e);
+        }
+
+        if(userRepository.checkLogonInformation(user)){
+            System.out.println(user.getUsername() + ": login successful!");
+            //set session cookies
+
+
+            //???????????????????
+            return new Response(HttpStatus.OK);
+        }
+        else{
+            System.out.println(user.getUsername() + ": login denied!");
+            return new Response(HttpStatus.UNAUTHORIZED);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////
 
     //POST /users/{username} - edit userdata
     public Response editUser(String username){

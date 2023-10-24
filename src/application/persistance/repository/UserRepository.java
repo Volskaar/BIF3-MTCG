@@ -45,9 +45,7 @@ public class UserRepository implements UserRepositoryInterface{
 
     ///////////////////////////////////////////////////////////////////*/
 
-    @Override
-    public boolean createNewUser(User user){
-        //1. check if username already existing
+    public boolean checkIfUserExists(User user){
         boolean userExisting;
 
         try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
@@ -58,11 +56,22 @@ public class UserRepository implements UserRepositoryInterface{
             preparedStatement.setString(1, user.getUsername());
             ResultSet resultSet = preparedStatement.executeQuery();
 
+            //returns boolean weather resultSet contains more rows (false if not -> no entry existing)
             userExisting = resultSet.next();
         }
         catch (SQLException e) {
             throw new DataAccessException("Couldn't query for user", e);
         }
+
+        return userExisting;
+    }
+
+    /////////////////////////////////////////////////////////////////////
+
+    @Override
+    public boolean createNewUser(User user){
+        //1. check if username already existing
+        boolean userExisting = checkIfUserExists(user);
 
         //2. if user not existing -> create new User
         if(!userExisting){
@@ -89,6 +98,43 @@ public class UserRepository implements UserRepositoryInterface{
             }
         }
         else{
+            System.out.println("User already exists!");
+            return false;
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////
+
+    @Override
+    public boolean checkLogonInformation(User user){
+        //1. check if username already existing
+        boolean userExisting = checkIfUserExists(user);
+
+        //2. if user existing -> check if password correct
+        if(userExisting){
+            try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
+                    """
+                    SELECT (password) FROM public.users WHERE username = ?
+                    """
+            )){
+                preparedStatement.setString(1, user.getUsername());
+                ResultSet resultSet = preparedStatement.executeQuery();
+
+                String dbPassword = "unfunctional";
+
+                if(resultSet.next()){
+                    dbPassword = resultSet.getString(1);
+                }
+
+                //3. compare dbPassword and given Password from http body
+                return dbPassword.equals(user.getPassword());
+            }
+            catch (SQLException e) {
+                throw new DataAccessException("Couldn't query for user", e);
+            }
+        }
+        else{
+            System.out.println("User not existing!");
             return false;
         }
     }
