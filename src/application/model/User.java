@@ -1,31 +1,20 @@
-package httpclient.model;
+package application.model;
 
 import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class User {
-    @JsonAlias({"id"})
-    private Integer id;
-    @JsonAlias({"username"})
+    @JsonAlias({"Username"})
     private String username;
-    @JsonAlias({"password"})
+    @JsonAlias({"Password"})
     private String password;
 
-    //default constructor for jackson
     public User(){
-
+        //default constructor for jackson
     }
 
-    public User(Integer id, String username, String password){
-        this.id = id;
+    public User(String username, String password){
         this.username = username;
         this.password = password;
-    }
-
-    public Integer getId() {
-        return this.id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
     }
 
     public String getUsername(){

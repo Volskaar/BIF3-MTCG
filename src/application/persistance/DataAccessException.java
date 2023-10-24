@@ -1,4 +1,4 @@
-package httpclient.persistance;
+package application.persistance;
 
 public class DataAccessException extends RuntimeException{
     public DataAccessException(String message) {

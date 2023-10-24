@@ -1,6 +1,6 @@
-package httpclient.controller;
+package application.controller;
 
-import httpclient.service.UserService;
+import application.service.UserService;
 import httpserver.server.Request;
 import httpserver.server.Response;
 import httpserver.server.RestController;
@@ -21,7 +21,10 @@ public class UserController implements RestController {
     public Response handleRequest(Request request) {
         System.out.println("Request received");
 
-        //GET request with e.g. id parameter -> /user/1
+        /*///////////////////////////////////////////////////////////////////
+        // initial development testing
+
+        //GET request with e.g. id parameter -> /users/1
         if (request.getMethod() == Method.GET && request.getPathParts().size() > 1) {
             return this.userService.getUser(request.getPathParts().get(1));
         }
@@ -31,21 +34,19 @@ public class UserController implements RestController {
             return this.userService.getUser();
         }
 
-        //POST user/login request
-        else if(request.getMethod() == Method.POST && request.getPathname().equals("/user/login")){
-            System.out.println("login post");
-            return this.userService.loginUser(request, request.getParams());
+        ///////////////////////////////////////////////////////////////////*/
+
+        // CURL - create users
+        if (request.getMethod() == Method.POST) {
+            return this.userService.createUser(request);
         }
 
-        //POST request
-        else if (request.getMethod() == Method.POST) {
-            return this.userService.addUser(request);
+        //CURL - edit users
+        else if (request.getMethod() == Method.POST && request.getPathParts().size() > 1) {
+            return this.userService.editUser(request.getPathParts().get(1));
         }
 
-        return new Response(
-                HttpStatus.BAD_REQUEST,
-                ContentType.JSON,
-                "[]"
-        );
+        //FAILSAFE
+        return new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "[]");
     }
 }

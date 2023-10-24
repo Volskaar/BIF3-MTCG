@@ -1,4 +1,4 @@
-package httpclient.service;
+package application.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
