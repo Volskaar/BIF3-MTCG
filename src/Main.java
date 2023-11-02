@@ -1,4 +1,7 @@
 import application.controller.UserController;
+import application.controller.PackageController;
+
+
 import httpserver.server.Server;
 import httpserver.utils.Router;
 import java.io.IOException;
@@ -17,13 +20,13 @@ public class Main {
     {
         Router router = new Router();
 
-        /////////////////////////////////////////////////////////////////////
+        /*///////////////////////////////////////////////////////////////////
         // initial development testing
         router.addService("/user", new UserController());
         router.addService("/user/{userId}", new UserController());
         router.addService("/user/login", new UserController());
 
-        /////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////*/
         // CURL - create users
         router.addService("/users", new UserController());
 
@@ -35,15 +38,17 @@ public class Main {
 
         /////////////////////////////////////////////////////////////////////
 
-        /* WIP
-
         // CURL - create/add packages
-        router.addService("/packages", new packageController());
+        router.addService("/packages", new PackageController());
 
         // CURL - acquire packages
-        router.addService("/transactions/packages", new packageController());
+        router.addService("/transactions/packages", new PackageController());
 
         /////////////////////////////////////////////////////////////////////
+
+        /* WIP
+
+
         // CURL - show cards
         router.addService("/cards", new cardController());
 

@@ -3,15 +3,19 @@ package application.model;
 import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class Card {
-
-    @JsonAlias({"cardname"})
+    @JsonAlias({"Id"})
+    private String id;
+    @JsonAlias({"Name"})
     private String cardname;
 
-    @JsonAlias({"cardtype"})
+    @JsonAlias({"Cardtype"})
     private String cardtype;
 
-    @JsonAlias({"damage"})
+    @JsonAlias({"Damage"})
     private int damage;
+
+    @JsonAlias({"Rarity"})
+    private int rarity;
 
     /////////////////////////////////////////////////////////////
 
@@ -19,14 +23,17 @@ public class Card {
         //default constructor for jackson
     }
 
-    public Card(String cardname, String cardtype, int damage){
+    public Card(String id, String cardname, int damage){
+        this.id = id;
         this.cardname = cardname;
-        this.cardtype = cardtype;
         this.damage = damage;
     }
 
     /////////////////////////////////////////////////////////////
 
+    public String getId(){
+        return this.id;
+    }
     public String getCardname() {
         return cardname;
     }
@@ -38,6 +45,8 @@ public class Card {
     public int getDamage() {
         return damage;
     }
+
+    public int getRarity(){return this.rarity;}
 
     /////////////////////////////////////////////////////////////
 
@@ -51,5 +60,9 @@ public class Card {
 
     public void setDamage(int damage) {
         this.damage = damage;
+    }
+
+    public void setRarity(int rarity) {
+        this.rarity = rarity;
     }
 }

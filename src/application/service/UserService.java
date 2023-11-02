@@ -14,6 +14,7 @@ import application.persistance.repository.UserRepository;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.InputStream;
+import java.net.HttpCookie;
 import java.util.Map;
 
 public class UserService extends BaseService{
@@ -90,9 +91,11 @@ public class UserService extends BaseService{
             System.out.println(user.getUsername() + ": login successful!");
             //set session cookies
 
+            HttpCookie cookie = new HttpCookie("user", user.getUsername());
+            cookie.setDomain("localhost");
 
             //???????????????????
-            return new Response(HttpStatus.OK);
+            return new Response(HttpStatus.OK, ContentType.JSON,"{'Set-Cookie':"+cookie+"}");
         }
         else{
             System.out.println(user.getUsername() + ": login denied!");
