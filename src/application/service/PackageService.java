@@ -7,10 +7,14 @@ import application.persistance.repository.PackageRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import httpserver.http.HttpStatus;
+import httpserver.server.HeaderMap;
 import httpserver.server.Request;
 import httpserver.server.Response;
 
 import java.lang.reflect.Type;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 public class PackageService extends BaseService{
 
@@ -31,11 +35,19 @@ public class PackageService extends BaseService{
             throw new RuntimeException(e);
         }
 
-        if(PackageRepository.createPackage(cards)){
-            //debug
+        //check for authorization
+        if(!Objects.equals(request.getHeaderMap().getHeader("Authorization"), "Bearer admin-mtcgToken")){
+            System.out.println("user unauthorized");
+            request.getHeaderMap().print();
+            return new Response(HttpStatus.FORBIDDEN);
+        }
+
+        //create package
+        if(packageRepository.createPackage(cards)){
             for(int i=0; i<5; i++){
                 System.out.println(cards[i].getCardname());
             }
+
             return new Response(HttpStatus.CREATED);
         }
         else{
