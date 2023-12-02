@@ -36,7 +36,7 @@ public class PackageService extends BaseService{
         }
 
         //check for authorization
-        if(!Objects.equals(request.getHeaderMap().getHeader("Authorization"), "Bearer admin-mtcgToken")){
+        if(!packageRepository.checkAuthentication(request.getHeaderMap().getHeader("Authorization"))){
             System.out.println("user unauthorized");
             request.getHeaderMap().print();
             return new Response(HttpStatus.FORBIDDEN);

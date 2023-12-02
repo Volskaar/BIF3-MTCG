@@ -138,4 +138,26 @@ public class UserRepository implements UserRepositoryInterface{
             return false;
         }
     }
+
+    @Override
+    public void setUserToken(User user){
+        try (PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
+                """
+                UPDATE users SET authtoken = ? WHERE username = ?
+                """)) {
+
+            String token = "Bearer " + user.getUsername() + "-mtcgToken";
+            preparedStatement.setString(1, token);
+            preparedStatement.setString(2, user.getUsername());
+
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                this.unitOfWork.commitTransaction();
+                System.out.println("Token added!");
+            }
+        } catch (SQLException e) {
+            throw new DataAccessException("Couldn't add token", e);
+        }
+    }
 }

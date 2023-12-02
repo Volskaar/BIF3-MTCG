@@ -89,13 +89,10 @@ public class UserService extends BaseService{
 
         if(userRepository.checkLogonInformation(user)){
             System.out.println(user.getUsername() + ": login successful!");
-            //set session cookies
 
-            HttpCookie cookie = new HttpCookie("user", user.getUsername());
-            cookie.setDomain("localhost");
+            userRepository.setUserToken(user);
 
-            //???????????????????
-            return new Response(HttpStatus.OK, ContentType.JSON,"{'Set-Cookie':"+cookie+"}");
+            return new Response(HttpStatus.OK);
         }
         else{
             System.out.println(user.getUsername() + ": login denied!");
