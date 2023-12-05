@@ -18,15 +18,18 @@ public class PackageController implements RestController{
         this.packageService = new PackageService();
     }
     public Response handleRequest(Request request) {
-        if(request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/packages")){
+        if (request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/packages")) {
             return this.packageService.createPackage(request);
         }
 
-        else if(request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/transactions/packages"))
+        else if (request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/transactions")) {
+            System.out.println("Controller reached");
             return this.packageService.acquirePackage(request);
-
-        else{
-            return new Response(HttpStatus.INTERNAL_SERVER_ERROR);
         }
+
+        /////////////////////////////////////////////////////////////////////
+
+        //FAILSAFE
+        return new Response(HttpStatus.BAD_REQUEST, ContentType.JSON, "[]");
     }
 }

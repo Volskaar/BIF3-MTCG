@@ -38,11 +38,11 @@ public class Main {
 
         /////////////////////////////////////////////////////////////////////
 
-        // CURL - create/add packages
-        router.addService("/packages", new PackageController());
-
         // CURL - acquire packages
         router.addService("/transactions/packages", new PackageController());
+
+        // CURL - create/add packages
+        router.addService("/packages", new PackageController());
 
         /////////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,6 @@
 package application.persistance.repository;
 
+import application.model.Package;
 import application.persistance.UnitOfWork;
 import application.persistance.DataAccessException;
 import application.model.Card;
@@ -11,10 +12,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class PackageRepository implements PackageRepositoryInterface{
+public class PackageRepository implements PackageRepositoryInterface {
     private final UnitOfWork unitOfWork;
 
-    public boolean checkAuthentication(String token){
+    public boolean checkAuthentication(String token) {
         try (PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
                 """
                 SELECT (username) FROM public.users WHERE authtoken = ?
@@ -26,17 +27,17 @@ public class PackageRepository implements PackageRepositoryInterface{
 
             return resultSet.next();
         } catch (SQLException e) {
-            throw new DataAccessException("Couldn't create new package", e);
+            throw new DataAccessException("Couldn't authenticate user", e);
         }
     }
 
-    public PackageRepository(UnitOfWork unitOfWork){
+    public PackageRepository(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
     }
 
     @Override
-    public boolean createPackage(Card[] cards){
-        if(cards.length < 5) {
+    public boolean createPackage(Card[] cards) {
+        if (cards.length < 5) {
             return false;
         }
 
@@ -47,7 +48,7 @@ public class PackageRepository implements PackageRepositoryInterface{
                 """)) {
 
             int cnt = 1;
-            for(Card card : cards){
+            for (Card card : cards) {
                 preparedStatement.setObject(cnt, card.getId());
                 cnt++;
             }
@@ -67,7 +68,38 @@ public class PackageRepository implements PackageRepositoryInterface{
     }
 
     @Override
-    public boolean acquirePackage(){
+    public boolean acquirePackage(String token) {
+        System.out.println("Repository reached");
+        String[] cardUUIDs = new String[5];
+        Card[] cards = new Card[5];
+        int packageId;
+
+        //1. pick random package from Package-DB and extract card-UUIDs
+        try (PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
+                """
+                        SELECT * FROM public.packages ORDER BY RANDOM() LIMIT 1
+                        """
+        )) {
+
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            if (resultSet.next()) {
+                packageId = resultSet.getInt(0);
+
+                //create cards from card-uuids
+                for(int i = 0; i<5; i++){
+                    cardUUIDs[i] = resultSet.getString(i);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        //2. insert card-UUIDs into user-DB stack
+        for(int i = 0; i<5; i++){
+            System.out.println(cardUUIDs[i]);
+        }
+
         return true;
     }
 }

@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class Package {
     @JsonAlias({"Id"})
-    private String id;
+    private int id;
     @JsonAlias({"Cards"})
     private Card[] cards;
 
-    public Package(String id, Card[] cards){
+    public Package(int id, Card[] cards){
         this.id = id;
         this.cards = cards;
     }
 
     /////////////////////////////////////////////////////////////
 
-    public String getId(){
+    public int getId(){
         return this.id;
     }
 
@@ -34,6 +34,7 @@ public class Package {
 
     /////////////////////////////////////////////////////////////
 
+    public void setId(int id){this.id = id;}
     public void setCards(Card[] cards){
         this.cards = cards;
     }

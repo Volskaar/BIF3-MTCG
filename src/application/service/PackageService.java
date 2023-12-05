@@ -25,9 +25,10 @@ public class PackageService extends BaseService{
     }
 
     public Response createPackage(Request request){
+        // get and deserialize JSON in request body
         String requestBody = request.getBody();
-
         Card[] cards;
+
         try{
             cards = getObjectMapper().readValue(requestBody, new TypeReference<Card[]>(){});
         }
@@ -35,14 +36,14 @@ public class PackageService extends BaseService{
             throw new RuntimeException(e);
         }
 
-        //check for authorization
+        // check for authorization
         if(!packageRepository.checkAuthentication(request.getHeaderMap().getHeader("Authorization"))){
             System.out.println("user unauthorized");
             request.getHeaderMap().print();
             return new Response(HttpStatus.FORBIDDEN);
         }
 
-        //create package
+        // create package
         if(packageRepository.createPackage(cards)){
             for(int i=0; i<5; i++){
                 System.out.println(cards[i].getCardname());
@@ -56,6 +57,22 @@ public class PackageService extends BaseService{
     }
 
     public Response acquirePackage(Request request){
-        return new Response(HttpStatus.NOT_IMPLEMENTED);
+        System.out.println("Service reached");
+        String token = request.getHeaderMap().getHeader("Authorization");
+
+        // check for authorization
+        if(!packageRepository.checkAuthentication(token)){
+            System.out.println("user unauthorized");
+            request.getHeaderMap().print();
+            return new Response(HttpStatus.FORBIDDEN);
+        }
+
+        // acquire package by user based on whom the token belongs to
+        if(packageRepository.acquirePackage(token)){
+            return new Response(HttpStatus.OK);
+        }
+        else{
+            return new Response(HttpStatus.FORBIDDEN);
+        }
     }
 }
