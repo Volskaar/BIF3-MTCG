@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
+import java.util.UUID;
 
 public class PackageRepository implements PackageRepositoryInterface {
     private final UnitOfWork unitOfWork;
@@ -69,26 +70,25 @@ public class PackageRepository implements PackageRepositoryInterface {
 
     @Override
     public boolean acquirePackage(String token) {
-        System.out.println("Repository reached");
-        String[] cardUUIDs = new String[5];
+        UUID[] cardUUIDs = new UUID[5];
         Card[] cards = new Card[5];
         int packageId;
 
         //1. pick random package from Package-DB and extract card-UUIDs
         try (PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
-                """
-                        SELECT * FROM public.packages ORDER BY RANDOM() LIMIT 1
-                        """
+                    """
+                    SELECT * FROM public.packages ORDER BY RANDOM() LIMIT 1
+                    """
         )) {
 
             ResultSet resultSet = preparedStatement.executeQuery();
 
             if (resultSet.next()) {
-                packageId = resultSet.getInt(0);
+                packageId = resultSet.getInt(6);
 
-                //create cards from card-uuids
+                //ins
                 for(int i = 0; i<5; i++){
-                    cardUUIDs[i] = resultSet.getString(i);
+                    cardUUIDs[i] = (UUID) resultSet.getObject(i+1);
                 }
             }
         } catch (SQLException e) {
@@ -96,10 +96,28 @@ public class PackageRepository implements PackageRepositoryInterface {
         }
 
         //2. insert card-UUIDs into user-DB stack
-        for(int i = 0; i<5; i++){
-            System.out.println(cardUUIDs[i]);
-        }
+        try (PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
+                """
+                UPDATE public.users SET stack = stack || ? WHERE authtoken = ?
+                """
+        )) {
+            for (UUID cardUUID : cardUUIDs) {
+                preparedStatement.setObject(1, new UUID[]{cardUUID});
+                preparedStatement.setString(2, token);
 
-        return true;
+                int rowsAffected = preparedStatement.executeUpdate();
+
+                if (rowsAffected <= 0) {
+                    // Handle the case where the update fails for one or more UUIDs
+                    return false;
+                }
+            }
+
+            this.unitOfWork.commitTransaction();
+            System.out.println("Cards added to stack");
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

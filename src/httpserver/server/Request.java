@@ -15,12 +15,20 @@ public class Request {
     private String body;
 
     public String getServiceRoute(){
+        String path = "/";
+        
         if (this.pathParts == null ||
                 this.pathParts.isEmpty()) {
             return null;
         }
 
-        return '/' + this.pathParts.get(0);
+        for(String part: this.getPathParts()){
+            path = path + part + '/';
+        }
+
+        path = path.substring(0, path.length()-1);
+
+        return path;
     }
 
     public String getUrlContent(){

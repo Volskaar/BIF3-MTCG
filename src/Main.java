@@ -30,24 +30,23 @@ public class Main {
         // CURL - create users
         router.addService("/users", new UserController());
 
-        // CURL - edit user data
-        router.addService("/users/{username}", new UserController());
-
         // CURL - login users
         router.addService("/sessions", new UserController());
 
-        /////////////////////////////////////////////////////////////////////
+        // CURL - edit user data
+        // router.addService("/users/{username}", new UserController());
 
-        // CURL - acquire packages
-        router.addService("/transactions/packages", new PackageController());
+        /////////////////////////////////////////////////////////////////////
 
         // CURL - create/add packages
         router.addService("/packages", new PackageController());
 
+        // CURL - acquire packages
+        router.addService("/transactions/packages", new PackageController());
+
         /////////////////////////////////////////////////////////////////////
 
         /* WIP
-
 
         // CURL - show cards
         router.addService("/cards", new cardController());
@@ -56,6 +55,7 @@ public class Main {
         router.addService("/deck", new deckController());
 
         /////////////////////////////////////////////////////////////////////
+
         // CURL - see stats
         router.addService("/stats", new statController());
 

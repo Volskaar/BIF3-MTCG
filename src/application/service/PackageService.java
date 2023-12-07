@@ -57,7 +57,6 @@ public class PackageService extends BaseService{
     }
 
     public Response acquirePackage(Request request){
-        System.out.println("Service reached");
         String token = request.getHeaderMap().getHeader("Authorization");
 
         // check for authorization

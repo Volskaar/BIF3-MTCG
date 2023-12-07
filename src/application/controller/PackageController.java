@@ -22,8 +22,7 @@ public class PackageController implements RestController{
             return this.packageService.createPackage(request);
         }
 
-        else if (request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/transactions")) {
-            System.out.println("Controller reached");
+        else if (request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/transactions/packages")) {
             return this.packageService.acquirePackage(request);
         }
 
