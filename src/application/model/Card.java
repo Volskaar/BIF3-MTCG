@@ -57,4 +57,5 @@ public class Card {
     public void setDamage(int damage) {
         this.damage = damage;
     }
+    public void setCardid(UUID uuid){this.id = uuid;}
 }
