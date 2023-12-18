@@ -1,4 +1,9 @@
+import application.controller.CardController;
+import application.controller.DeckController;
 import application.controller.UserController;
+import application.controller.PackageController;
+
+
 import httpserver.server.Server;
 import httpserver.utils.Router;
 import java.io.IOException;
@@ -17,40 +22,42 @@ public class Main {
     {
         Router router = new Router();
 
-        /////////////////////////////////////////////////////////////////////
+        /*///////////////////////////////////////////////////////////////////
         // initial development testing
         router.addService("/user", new UserController());
         router.addService("/user/{userId}", new UserController());
         router.addService("/user/login", new UserController());
 
-        /////////////////////////////////////////////////////////////////////
+        ///////////////////////////////////////////////////////////////////*/
         // CURL - create users
         router.addService("/users", new UserController());
 
-        // CURL - edit user data
-        router.addService("/users/{username}", new UserController());
-
         // CURL - login users
         router.addService("/sessions", new UserController());
+
+        // CURL - edit user data
+        // router.addService("/users/{username}", new UserController());
+
+        /////////////////////////////////////////////////////////////////////
+
+        // CURL - create/add packages
+        router.addService("/packages", new PackageController());
+
+        // CURL - acquire packages
+        router.addService("/transactions/packages", new PackageController());
+
+        /////////////////////////////////////////////////////////////////////
+
+        // CURL - show cards
+        router.addService("/cards", new CardController());
+
+        // CURL - show and configure deck
+        router.addService("/deck", new DeckController());
 
         /////////////////////////////////////////////////////////////////////
 
         /* WIP
 
-        // CURL - create/add packages
-        router.addService("/packages", new packageController());
-
-        // CURL - acquire packages
-        router.addService("/transactions/packages", new packageController());
-
-        /////////////////////////////////////////////////////////////////////
-        // CURL - show cards
-        router.addService("/cards", new cardController());
-
-        // CURL - show and configure deck
-        router.addService("/deck", new deckController());
-
-        /////////////////////////////////////////////////////////////////////
         // CURL - see stats
         router.addService("/stats", new statController());
 

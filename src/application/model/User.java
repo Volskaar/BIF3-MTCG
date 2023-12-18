@@ -4,12 +4,17 @@ import com.fasterxml.jackson.annotation.JsonAlias;
 
 public class User {
 
-    private Card[] stack;
-
     @JsonAlias({"Username"})
     private String username;
     @JsonAlias({"Password"})
     private String password;
+    @JsonAlias({"AuthToken"})
+    private String authToken;
+    @JsonAlias({"Coins"})
+    private int coins;
+    @JsonAlias({"Stack"})
+    private Card[] stack;
+
 
     /////////////////////////////////////////////////////////////
 
@@ -17,9 +22,11 @@ public class User {
         //default constructor for jackson
     }
 
-    public User(String username, String password){
+    public User(String username, String password, String authToken, Card[] stack){
         this.username = username;
         this.password = password;
+        this.authToken = authToken;
+        this.stack = stack;
     }
 
     /////////////////////////////////////////////////////////////
@@ -34,6 +41,12 @@ public class User {
     public Card[] getStack(){
         return stack;
     }
+
+    public String getToken(){
+        return this.authToken;
+    }
+    public int getCoins(){return this.coins;}
+
     public Card getCardFromStack(int nr){
         return stack[nr];
     }
@@ -62,4 +75,9 @@ public class User {
     public void setCardInStack(Card card, int nr){
         this.stack[nr] = card;
     }
+
+    public void setToken(String authToken){
+        this.authToken = authToken;
+    }
+    public void setCoins(int amount){this.coins = amount;}
 }
