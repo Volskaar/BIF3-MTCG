@@ -1,4 +1,5 @@
 import application.controller.CardController;
+import application.controller.DeckController;
 import application.controller.UserController;
 import application.controller.PackageController;
 
@@ -50,12 +51,12 @@ public class Main {
         // CURL - show cards
         router.addService("/cards", new CardController());
 
-        /* WIP
-
         // CURL - show and configure deck
-        router.addService("/deck", new deckController());
+        router.addService("/deck", new DeckController());
 
         /////////////////////////////////////////////////////////////////////
+
+        /* WIP
 
         // CURL - see stats
         router.addService("/stats", new statController());
