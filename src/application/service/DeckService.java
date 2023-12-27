@@ -11,6 +11,7 @@ import httpserver.http.HttpStatus;
 import httpserver.server.Request;
 import httpserver.server.Response;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class DeckService extends BaseService{
@@ -22,6 +23,7 @@ public class DeckService extends BaseService{
     }
 
     public Response showDeck(Request request){
+        String params = request.getParams();
         String token = request.getHeaderMap().getHeader("Authorization");
 
         //1. authenticate user with token
@@ -40,6 +42,15 @@ public class DeckService extends BaseService{
         }
         catch(JsonProcessingException e){
             throw new RuntimeException(e);
+        }
+
+        System.out.println("Params: " + params);
+
+        // if params for plaintext given return as plaintext
+        if (Objects.equals(params, "format=plain")) {
+            // Reformat json text as plain text
+            String plainText = formatJsonAsPlainText(json);
+            return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, plainText);
         }
 
         return new Response(HttpStatus.OK, ContentType.JSON, json);
@@ -89,4 +100,11 @@ public class DeckService extends BaseService{
 
         return new Response(HttpStatus.FORBIDDEN);
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    private String formatJsonAsPlainText(String json) {
+        return json.replaceAll("[{}\",]", "");
+    }
 }
+

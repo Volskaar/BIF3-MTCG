@@ -37,7 +37,7 @@ public class RequestHandler implements Runnable {
                     "[]"
                 );
             } else {
-                System.out.println(request.getServiceRoute());
+                //System.out.println("ServiceRoute: " + request.getServiceRoute());
                 response = this.router.resolve(request.getServiceRoute()).handleRequest(request);
             }
             printWriter.write(response.get());

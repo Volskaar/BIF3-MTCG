@@ -36,7 +36,7 @@ public class Main {
         router.addService("/sessions", new UserController());
 
         // CURL - edit user data
-        // router.addService("/users/{username}", new UserController());
+        router.addService("/users/*", new UserController());
 
         /////////////////////////////////////////////////////////////////////
 

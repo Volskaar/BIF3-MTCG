@@ -4,6 +4,7 @@ import httpserver.http.Method;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Request {
     private Method method;
@@ -25,6 +26,12 @@ public class Request {
         for(String part: this.getPathParts()){
             path = path + part + '/';
         }
+
+        if(Objects.equals(this.pathParts.get(0), "users") && pathParts.size() > 1){
+            path = "/users/";
+        }
+
+        System.out.println("PathName: " + pathname);
 
         path = path.substring(0, path.length()-1);
 
