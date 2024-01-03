@@ -26,9 +26,8 @@ public class CardService extends BaseService{
         // check for authorization
 
         if(!cardRepository.checkAuthentication(token)){
-            System.out.println("user unauthorized");
             request.getHeaderMap().print();
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, "User unauthorized");
         }
 
         //retrieve cardUUIDs from DB
@@ -39,6 +38,11 @@ public class CardService extends BaseService{
 
         Card[] cards;
         cards = new Card[cardUUIDs.length];
+
+        //check if no cards in response
+        if(cardUUIDs.length == 0){
+            return new Response(HttpStatus.NO_CONTENT, ContentType.PLAIN_TEXT, "The user doesn't have any cards");
+        }
 
         for(int i=0; i<cardUUIDs.length; i++){
             cards[i] = cardRepository.generateCard(cardUUIDs[i]);

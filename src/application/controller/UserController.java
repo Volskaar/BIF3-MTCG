@@ -21,27 +21,6 @@ public class UserController implements RestController {
 
     @Override
     public Response handleRequest(Request request) {
-        System.out.println("Request received");
-
-        /*///////////////////////////////////////////////////////////////////
-        // initial development testing
-
-        //GET request with e.g. id parameter -> /users/1
-        if (request.getMethod() == Method.GET && request.getPathParts().size() > 1) {
-            return this.userService.getUser(request.getPathParts().get(1));
-        }
-
-        //GET request
-        else if (request.getMethod() == Method.GET) {
-            return this.userService.getUser();
-        }
-
-        ///////////////////////////////////////////////////////////////////*/
-        System.out.println("Pathname: " + request.getPathname());
-        System.out.println("PathPart0: " + request.getPathParts().get(0));
-        System.out.println("PathPart1: " + request.getPathParts().get(1));
-        System.out.println("PathSize: " + request.getPathParts().size());
-        System.out.println("Method: " + request.getMethod());
 
         // CURL - login users
         if(request.getMethod() == Method.POST && Objects.equals(request.getPathname(), "/sessions")){

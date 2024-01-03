@@ -28,11 +28,16 @@ public class DeckService extends BaseService{
 
         //1. authenticate user with token
         if(!this.deckRepository.checkAuthentication(token)){
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, "User unauthorized");
         }
 
         //2. get cards from user deck based on auth
         Card[] cards = this.deckRepository.showDeck(token);
+
+        //check if no cards in response
+        if(cards.length == 0){
+            return new Response(HttpStatus.NO_CONTENT, ContentType.PLAIN_TEXT, "The users deck is empty");
+        }
 
         //3. turn card array into json string and attach to response
         String json = null;
@@ -48,9 +53,7 @@ public class DeckService extends BaseService{
 
         // if params for plaintext given return as plaintext
         if (Objects.equals(params, "format=plain")) {
-            // Reformat json text as plain text
-            String plainText = formatJsonAsPlainText(json);
-            return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, plainText);
+            return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, json);
         }
 
         return new Response(HttpStatus.OK, ContentType.JSON, json);
@@ -61,7 +64,7 @@ public class DeckService extends BaseService{
         String token = request.getHeaderMap().getHeader("Authorization");
 
         if(!this.deckRepository.checkAuthentication(token)){
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, "User unauthorized");
         }
 
         // get and deserialize JSON in request body
@@ -77,12 +80,12 @@ public class DeckService extends BaseService{
 
         // should fail with less than 4 cards
         if(cardUUIDs.length < 4){
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.BAD_REQUEST, ContentType.PLAIN_TEXT, "The provided deck did not include the required amount of cards");
         }
 
         // cards need to be in stack to be used in deck
         if(!this.deckRepository.checkIfCardsInStack(token, cardUUIDs)){
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "At least one of the provided cards does not belong to the user or is not available");
         }
 
         // check if current deck empty, if not, add current cards back to stack
@@ -94,17 +97,12 @@ public class DeckService extends BaseService{
         if(this.deckRepository.configureDeck(token, cardUUIDs)){
             // if successfully inserted into deck, remove from stack
             if(this.deckRepository.removeCardsFromStack(token, cardUUIDs)){
-                return new Response(HttpStatus.OK);
+                return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "The deck has been successfully configured");
             }
         }
 
-        return new Response(HttpStatus.FORBIDDEN);
-    }
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    private String formatJsonAsPlainText(String json) {
-        return json.replaceAll("[{}\",]", "");
+        //failsafe
+        return new Response(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
 

@@ -6,6 +6,7 @@ import application.persistance.UnitOfWork;
 import application.persistance.repository.PackageRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import httpserver.http.ContentType;
 import httpserver.http.HttpStatus;
 import httpserver.server.HeaderMap;
 import httpserver.server.Request;
@@ -40,19 +41,15 @@ public class PackageService extends BaseService{
         if(!packageRepository.checkAuthentication(request.getHeaderMap().getHeader("Authorization"))){
             System.out.println("user unauthorized");
             request.getHeaderMap().print();
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.FORBIDDEN, ContentType.PLAIN_TEXT, "Provided user is not \"admin\"");
         }
 
         // create package
         if(packageRepository.createPackage(cards)){
-            for(int i=0; i<5; i++){
-                System.out.println(cards[i].getCardname());
-            }
-
-            return new Response(HttpStatus.CREATED);
+            return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, "Package successfully created");
         }
         else{
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -63,12 +60,12 @@ public class PackageService extends BaseService{
         if(!packageRepository.checkAuthentication(token)){
             System.out.println("user unauthorized");
             request.getHeaderMap().print();
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, "User is unauthorized");
         }
 
         // acquire package by user based on whom the token belongs to
         if(packageRepository.acquirePackage(token)){
-            return new Response(HttpStatus.OK);
+            return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "A package has been successfully bought");
         }
         else{
             return new Response(HttpStatus.FORBIDDEN);

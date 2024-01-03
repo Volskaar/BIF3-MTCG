@@ -1,7 +1,4 @@
-import application.controller.CardController;
-import application.controller.DeckController;
-import application.controller.UserController;
-import application.controller.PackageController;
+import application.controller.*;
 
 
 import httpserver.server.Server;
@@ -22,13 +19,8 @@ public class Main {
     {
         Router router = new Router();
 
-        /*///////////////////////////////////////////////////////////////////
-        // initial development testing
-        router.addService("/user", new UserController());
-        router.addService("/user/{userId}", new UserController());
-        router.addService("/user/login", new UserController());
+        /////////////////////////////////////////////////////////////////////
 
-        ///////////////////////////////////////////////////////////////////*/
         // CURL - create users
         router.addService("/users", new UserController());
 
@@ -56,15 +48,17 @@ public class Main {
 
         /////////////////////////////////////////////////////////////////////
 
-        /* WIP
-
         // CURL - see stats
-        router.addService("/stats", new statController());
-
-        // CURL - see scoreboard
-        router.addService("/battles", new statController());
+        router.addService("/stats", new ScoreController());
 
         /////////////////////////////////////////////////////////////////////
+
+        // CURL - see scoreboard
+        router.addService("/scoreboard", new ScoreController());
+
+        /////////////////////////////////////////////////////////////////////
+        /* WIP
+
         // CURL - do battle
         router.addService("/users", new battleController());
 

@@ -29,32 +29,6 @@ public class UserService extends BaseService{
         this.userRepository = new UserRepository(new UnitOfWork());
     }
 
-    /*///////////////////////////////////////////////////////////////////
-    // initial development testing
-
-    // GET /user
-    public Response getUser(){
-        return new Response(HttpStatus.OK);
-    }
-
-    // GET /user/id
-    public Response getUser(String id){
-        System.out.println("get user for id: " + id);
-        User user = userRepository.findById(Integer.parseInt(id));
-
-        String json = null;
-        try{
-            json = this.getObjectMapper().writeValueAsString(user);
-        }
-        catch(JsonProcessingException e){
-            throw new RuntimeException(e);
-        }
-
-        return new Response(HttpStatus.NOT_IMPLEMENTED, ContentType.JSON, json);
-    }
-
-    ///////////////////////////////////////////////////////////////////*/
-
     //POST /users - create user
     public Response createUser(Request request){
         String requestBody = request.getBody();
@@ -68,11 +42,10 @@ public class UserService extends BaseService{
         }
 
         if(userRepository.createNewUser(newUser)){
-            System.out.println(newUser.getUsername() + ": user created!");
-            return new Response(HttpStatus.CREATED);
+            return new Response(HttpStatus.CREATED, ContentType.PLAIN_TEXT, "User successfully created");
         }
         else{
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.CONFLICT, ContentType.PLAIN_TEXT, "User with same username already registered");
         }
     }
 
@@ -92,21 +65,18 @@ public class UserService extends BaseService{
         }
 
         if(userRepository.checkLogonInformation(user)){
-            System.out.println(user.getUsername() + ": login successful!");
-
             userRepository.setUserToken(user);
 
-            return new Response(HttpStatus.OK);
+            return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, user.getUsername() + "login successful");
         }
         else{
-            System.out.println(user.getUsername() + ": login denied!");
-            return new Response(HttpStatus.UNAUTHORIZED);
+            return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, "Invalid username/password provided");
         }
     }
 
     /////////////////////////////////////////////////////////////////////
 
-    //POST /users/{username} - edit userdata
+    //PUT /users/{username} - edit userdata
     public Response editUser(Request request, String inputUsername){
         String requestBody = request.getBody();
         String token = request.getHeaderMap().getHeader("Authorization");
@@ -118,12 +88,10 @@ public class UserService extends BaseService{
         System.out.println("DB: " + dbUsername + " | IP: " + inputUsername);
 
         if(dbUsername == null){
-            System.out.println("User not found in DB!");
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.NOT_FOUND, ContentType.PLAIN_TEXT, "User not found.");
         }
         if(!dbUsername.equals(inputUsername)){
-            System.out.println("Username and token dont match!");
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, "User not authorized.");
         }
 
 
@@ -151,12 +119,16 @@ public class UserService extends BaseService{
                 updater.getBio(),
                 updater.getImage()
         )){
-            return new Response(HttpStatus.OK);
+            return new Response(HttpStatus.OK, ContentType.PLAIN_TEXT, "User successfully updated.");
         }
 
+        //failsafe
         return new Response(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    /////////////////////////////////////////////////////////////////////
+
+    // GET /users/{username} - show UserData
     public Response showUser(Request request, String inputUsername){
 
         //1. authenticate user by requesting username by AuthToken from db
@@ -164,21 +136,15 @@ public class UserService extends BaseService{
         String dbUsername = this.userRepository.getUsernameByToken(token);
 
         if(dbUsername == null){
-            System.out.println("User not found in DB!");
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.NOT_FOUND, ContentType.PLAIN_TEXT, "User not found.");
         }
         if(!dbUsername.equals(inputUsername)){
-            System.out.println("Username and token dont match!");
-            return new Response(HttpStatus.FORBIDDEN);
+            return new Response(HttpStatus.UNAUTHORIZED, ContentType.PLAIN_TEXT, "User not authorized.");
         }
 
         //2. get user based on username into object
 
         User user = this.userRepository.getUser(inputUsername);
-
-        if(user == null){
-            return new Response(HttpStatus.NOT_FOUND);
-        }
 
         //3. serialize object into json and return in response body
 

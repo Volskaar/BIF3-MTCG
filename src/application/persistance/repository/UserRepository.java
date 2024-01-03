@@ -7,7 +7,6 @@ import application.model.User;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 
 public class UserRepository implements UserRepositoryInterface {
     private final UnitOfWork unitOfWork;
@@ -15,37 +14,6 @@ public class UserRepository implements UserRepositoryInterface {
     public UserRepository(UnitOfWork unitOfWork) {
         this.unitOfWork = unitOfWork;
     }
-
-    /*///////////////////////////////////////////////////////////////////
-    // initial development testing
-
-
-    @Override
-    public User findById(int id){
-        try(PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
-                """
-                select * from public.users where id = ?
-                """
-        )){
-            preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
-            User user = null;
-
-            while(resultSet.next()) {
-                user = new User(
-                        resultSet.getInt(1),
-                        resultSet.getString(2),
-                        resultSet.getString(3));
-            }
-
-            return user;
-        }
-        catch (SQLException e) {
-            throw new DataAccessException("Select nicht erfolgreich", e);
-        }
-    }
-
-    ///////////////////////////////////////////////////////////////////*/
 
     public boolean checkIfUserExists(User user) {
         boolean userExisting;
@@ -92,6 +60,7 @@ public class UserRepository implements UserRepositoryInterface {
                     System.out.println("Creation successful!");
                     return true;
                 } else {
+                    System.out.println("Creation failed!");
                     return false;
                 }
             } catch (SQLException e) {
@@ -137,6 +106,8 @@ public class UserRepository implements UserRepositoryInterface {
         }
     }
 
+    /////////////////////////////////////////////////////////////////////
+
     @Override
     public void setUserToken(User user) {
         try (PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
@@ -161,7 +132,6 @@ public class UserRepository implements UserRepositoryInterface {
 
     /////////////////////////////////////////////////////////////////////
 
-
     @Override
     public String getUsernameByToken(String token) {
         try (PreparedStatement preparedStatement = this.unitOfWork.prepareStatement(
@@ -181,6 +151,8 @@ public class UserRepository implements UserRepositoryInterface {
             throw new DataAccessException("Couldn't query for username", e);
         }
     }
+
+    /////////////////////////////////////////////////////////////////////
 
     @Override
     public boolean updateUserData(String username, String name, String bio, String image) {
@@ -207,6 +179,8 @@ public class UserRepository implements UserRepositoryInterface {
 
         return false;
     }
+
+    /////////////////////////////////////////////////////////////////////
 
     @Override
     public User getUser(String username){
